@@ -8,9 +8,23 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
+  // let id = counter.getNextUniqueId();
   var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+  // items[id] = text;
+  console.log('cread id:', id);
+  // console.log('creat id:', text);
+  // console.log('filepath:', `${exports.dataDir}/${id}.txt`);
+  setTimeout(function() {
+    fs.appendFile(`${exports.dataDir}/${id}.txt`, text, (err) => {
+      if (err) {
+        throw ('Error in adding file into data directory');
+      }
+    });
+  }, 10);
+
+  setTimeout(function() {
+    callback(null, { id, text });
+  }, 11);
 };
 
 exports.readAll = (callback) => {
