@@ -50,7 +50,7 @@ exports.getNextUniqueId = (callback = () => {}) => {
       callback(null, string);
     });
   });
-  console.log('counter:', counter);
+  // console.log('counter:', counter);
   return zeroPaddedNumber(counter);
 };
 

@@ -8,30 +8,46 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  // let id = counter.getNextUniqueId();
-  var id = counter.getNextUniqueId();
-  // items[id] = text;
-  console.log('cread id:', id);
+  var id = counter.getNextUniqueId(function(err, filename) {
+    // console.log('path:', `${exports.dataDir}/${filename}.txt`);
+    fs.writeFile(`${exports.dataDir}/${filename}.txt`, text, function () {
+      // console.log('id:', id);
+      // console.log({ id: filename, text: text });
+      callback(null, { id: filename, text: text });
+    });
+  });
+  items[id] = text;
+
+  // console.log('cread id:', id);
   // console.log('creat id:', text);
   // console.log('filepath:', `${exports.dataDir}/${id}.txt`);
-  setTimeout(function() {
-    fs.appendFile(`${exports.dataDir}/${id}.txt`, text, (err) => {
-      if (err) {
-        throw ('Error in adding file into data directory');
-      }
-    });
-  }, 10);
+  // setTimeout(function() {
+  //   fs.writeFileSync(`${exports.dataDir}/${id}.txt`, text);
+  // }, 10);
 
-  setTimeout(function() {
-    callback(null, { id, text });
-  }, 11);
+  // setTimeout(function() {
+  //   callback(null, { id, text });
+  // }, 11);
+  // counter.getNextUniqueId(function(err, filename) {
+  //   fs.writeFileSync(`${exports.dataDir}/${filename}.txt`, text);
+  //   callback(null, {filename, text });
+  // });
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  // Read files from dataDir (fs.readdir)
+  fs.readdir(exports.dataDir, function(err, files) {
+    // Iterate on files to construct an array containing objects of each file (id, text)
+    var data = _.map(files, (filename) => {
+      var number = filename.slice(0, 5); // get the index from 0 to 4
+      return { id: number, text: number };
+    });
+    callback(null, data);
   });
-  callback(null, data);
+  // var data = _.map(items, (text, id) => {
+  //   return { id, text };
+  // });
+  // callback(null, data);
 };
 
 exports.readOne = (id, callback) => {
