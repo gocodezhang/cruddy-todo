@@ -38,11 +38,18 @@ exports.readAll = (callback) => {
   // Read files from dataDir (fs.readdir)
   fs.readdir(exports.dataDir, function(err, files) {
     // Iterate on files to construct an array containing objects of each file (id, text)
-    var data = _.map(files, (filename) => {
-      var number = filename.slice(0, 5); // get the index from 0 to 4
-      return { id: number, text: number };
-    });
-    callback(null, data);
+    Promise.all(_.map(files, (filename) => {
+      return new Promise((resolve, reject) => {
+        var number = filename.slice(0, 5); // get the index from 0 to 4
+        fs.readFile(`${exports.dataDir}/${filename}`, function(err, data) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve({ id: number, text: data.toString() });
+          }
+        });
+      });
+    })).then((data) => callback(null, data));
   });
   // var data = _.map(items, (text, id) => {
   //   return { id, text };
